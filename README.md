@@ -2,7 +2,7 @@
 
 gospace is a workspace mangament tool for flattening vendor directory to a cohesive `GOPATH`.
 
-This tool is necessary for linters that do not handle modules properly.
+This tool is necessary for linters that do not handle modules properly. Once Go tooling has caught up with modules, this tool/repository will be deprecated.
 
 An example setup for `storj.io/storj` would set these environment variables:
 
