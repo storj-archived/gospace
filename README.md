@@ -24,7 +24,9 @@ GOSPACE_PKG=storj.io/storj
 GOSPACE_REPO=git@github.com:storj/storj.git
 ```
 
-First time you should run:
+## Setup
+
+First time when setting up your local system.
 
 ```
 gospace setup
@@ -37,6 +39,8 @@ gospace setup
 3. Run `GO111MODULE=on go mod vendor` inside `$GOSPACE_ROOT/src/$GOSPACE_PKG` folder. This downloads all dependencies into vendor directory.
 4. Moves all vendored directories to `$GOSPACE_ROOT/src`.
 
+## Updating
+
 Every time go.mod changes, you should run:
 
 ```
@@ -48,3 +52,29 @@ gospace update
 1. Delete all non-repository directories in `$GOSPACE_ROOT/src`, effectively deleting all vendored directories. Unless you have placed something manually, which is also deleted.
 2. Run `GO111MODULE=on go mod vendor` inside `$GOSPACE_ROOT/src/$GOSPACE_PKG` folder. This downloads all dependencies into vendor directory.
 3. Moves all vendored directories to `$GOSPACE_ROOT/src`.
+
+## Low-level commands
+
+To calculate hash of the `go.mod` and `go.sum` file:
+
+```
+gospace hash
+```
+
+To download dependencies and zip vendor folder:
+
+```
+gospace zip-vendor vendor.zip
+```
+
+To unzip a vendor directory:
+
+```
+gospace unzip-vendor vendor.zip
+```
+
+To flatten vendor directory:
+
+```
+gospace flatten-vendor
+```
