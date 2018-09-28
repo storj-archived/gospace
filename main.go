@@ -1,3 +1,6 @@
+// Copyright (C) 2018 Storj Labs, Inc.
+// See LICENSE for copying information.
+
 package main
 
 import (
@@ -75,6 +78,12 @@ func main() {
 	cmds := []Command{
 		&Setup{Common: common},
 		&Update{Common: common},
+		// &Cache{Common: common},
+
+		&Hash{Common: common},
+		&ZipVendor{Common: common},
+		&UnzipVendor{Common: common},
+		&FlattenVendor{Common: common},
 	}
 
 	for _, cmd := range cmds {

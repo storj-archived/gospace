@@ -1,3 +1,6 @@
+// Copyright (C) 2018 Storj Labs, Inc.
+// See LICENSE for copying information.
+
 package main
 
 import (
@@ -18,7 +21,7 @@ func (cmd *Update) Parse(args []string) error {
 func (cmd *Update) Exec() {
 	srcdir := cmd.Path("src")
 	if !Exists(srcdir) {
-		Fatalf("src directory %q missing, run setup", srcdir)
+		Fatalf("src directory %v missing, run setup", srcdir)
 	}
 
 	cmd.DeleteNonRepos()

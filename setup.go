@@ -1,3 +1,6 @@
+// Copyright (C) 2018 Storj Labs, Inc.
+// See LICENSE for copying information.
+
 package main
 
 import (
@@ -22,7 +25,7 @@ func (cmd *Setup) Parse(args []string) error {
 
 func (cmd *Setup) Exec() {
 	if !cmd.Overwrite && !Exists(cmd.Path("src")) {
-		fmt.Fprintf(os.Stderr, "src directory %q already setup", cmd.Path("src"))
+		fmt.Fprintf(os.Stderr, "src directory %v already setup", cmd.Path("src"))
 		os.Exit(1)
 	}
 

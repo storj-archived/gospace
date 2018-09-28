@@ -1,3 +1,5 @@
+// Copyright (C) 2018 Storj Labs, Inc.
+// See LICENSE for copying information.
 package main
 
 import (
@@ -11,6 +13,8 @@ import (
 )
 
 func (cmd Common) DeleteNonRepos() {
+	fmt.Fprintf(os.Stderr, "# Cleaning up src\n")
+
 	var err error
 	srcdir := cmd.Path("src")
 
@@ -29,7 +33,7 @@ func (cmd Common) DeleteNonRepos() {
 			}
 			return nil
 		})
-	ErrFatalf(err, "collect failed: %q", err)
+	ErrFatalf(err, "collect failed: %v", err)
 
 	err = filepath.Walk(srcdir,
 		func(path string, info os.FileInfo, err error) error {
@@ -58,44 +62,55 @@ func (cmd Common) DeleteNonRepos() {
 			}
 			return filepath.SkipDir
 		})
-	ErrFatalf(err, "remove failed: %q", err)
+	ErrFatalf(err, "remove failed: %v", err)
 }
 
 func (cmd Common) VendorModules() {
-	fmt.Fprintf(os.Stdout, "# Vendoring modules\n")
+	fmt.Fprintf(os.Stderr, "# Vendoring modules\n")
 
 	workdir, err := os.Getwd()
-	ErrFatalf(err, "unable to get working directory: %q\n", err)
+	ErrFatalf(err, "unable to get working directory: %v\n", err)
 
 	defer func() {
 		err = os.Chdir(workdir)
-		ErrFatalf(err, "unable to change directory: %q\n", err)
+		ErrFatalf(err, "unable to change directory: %v\n", err)
 	}()
 
 	err = os.Chdir(cmd.RepoDir())
-	ErrFatalf(err, "unable to change directory: %q\n", err)
+	ErrFatalf(err, "unable to change directory: %v\n", err)
 
 	err = os.RemoveAll("vendor")
 	if os.IsNotExist(err) {
 		err = nil
 	}
-	ErrFatalf(err, "unable to delete vendor: %q\n", err)
+	ErrFatalf(err, "unable to delete vendor: %v\n", err)
 
 	for repeat := 2; repeat > 0; repeat-- {
 		gomod := exec.Command("go", "mod", "vendor", "-v")
 		gomod.Env = append(os.Environ(), "GO111MODULE=on")
-		gomod.Stdout, gomod.Stderr = os.Stdout, os.Stderr
+		gomod.Stdout, gomod.Stderr = os.Stderr, os.Stderr
 		err = gomod.Run()
-		Errf(err, "go mod vendor failed, retrying: %q\n", err)
+		Errf(err, "go mod vendor failed, retrying: %v\n", err)
 		if err == nil {
 			break
 		}
 	}
-	ErrFatalf(err, "go mod vendor failed: %q\n", err)
+	ErrFatalf(err, "go mod vendor failed: %v\n", err)
+}
+
+func (cmd Common) DeleteVendor() {
+	fmt.Fprintf(os.Stderr, "# Deleting vendor\n")
+
+	vendordir := filepath.Join(cmd.RepoDir(), "vendor")
+	removeErr := os.RemoveAll(vendordir)
+	if os.IsNotExist(removeErr) {
+		removeErr = nil
+	}
+	ErrFatalf(removeErr, "unable to delete vendor: %v\n", removeErr)
 }
 
 func (cmd Common) FlattenVendor() {
-	fmt.Fprintf(os.Stdout, "# Flattening vendor\n")
+	fmt.Fprintf(os.Stderr, "# Flattening vendor\n")
 
 	vendordir := filepath.Join(cmd.RepoDir(), "vendor")
 	srcdir := cmd.Path("src")
@@ -116,10 +131,10 @@ func (cmd Common) FlattenVendor() {
 			}
 			return filepath.SkipDir
 		})
-	ErrFatalf(err, "rename failed: %q", err)
+	ErrFatalf(err, "rename failed: %v", err)
 
 	err = os.Remove(vendordir)
-	ErrFatalf(err, "unable to delete vendor: %q", err)
+	ErrFatalf(err, "unable to delete vendor: %v", err)
 }
 
 func ReadModules(path string) []string {
@@ -129,7 +144,7 @@ func ReadModules(path string) []string {
 	}
 
 	if err != nil {
-		ErrFatalf(err, "unable to read modules.txt: %q", err)
+		ErrFatalf(err, "unable to read modules.txt: %v", err)
 	}
 
 	unsorted := []string{}
