@@ -24,7 +24,7 @@ func (cmd *Setup) Parse(args []string) error {
 }
 
 func (cmd *Setup) Exec() {
-	if !cmd.Overwrite && !Exists(cmd.Path("src")) {
+	if !cmd.Overwrite && Exists(cmd.Path("src")) {
 		fmt.Fprintf(os.Stderr, "src directory %v already setup", cmd.Path("src"))
 		os.Exit(1)
 	}
