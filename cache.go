@@ -29,7 +29,8 @@ func (cmd *Cache) Exec() {
 
 	hash, err := HashFiles(
 		filepath.Join(repodir, "go.mod"),
-		filepath.Join(repodir, "go.sum"))
+		// filepath.Join(repodir, "go.sum"),
+	)
 	ErrFatal(err)
 
 	fmt.Println("HASH:", hash)
@@ -60,7 +61,8 @@ func (cmd *Hash) Exec() {
 
 	hash, err := HashFiles(
 		filepath.Join(repodir, "go.mod"),
-		filepath.Join(repodir, "go.sum"))
+		//filepath.Join(repodir, "go.sum"),
+	)
 	ErrFatal(err)
 
 	fmt.Println(hash)
