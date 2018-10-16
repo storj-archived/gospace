@@ -78,3 +78,7 @@ To flatten vendor directory:
 ```
 gospace flatten-vendor
 ```
+
+# License
+
+This code is licensed under [Apache v2](https://www.apache.org/licenses/LICENSE-2.0) license.
