@@ -38,13 +38,16 @@ func (cmd *IsTidy) Exec() {
 	ErrFatal(err)
 
 	if string(before) != string(after) {
+		diff, removed := difflines(string(before), string(after))
 		fmt.Fprintln(os.Stderr, "go.mod is not tidy")
-		fmt.Fprintln(os.Stderr, difflines(string(before), string(after)))
-		os.Exit(1)
+		fmt.Fprintln(os.Stderr, diff)
+		if removed {
+			os.Exit(1)
+		}
 	}
 }
 
-func difflines(a, b string) string {
+func difflines(a, b string) (patch string, removed bool) {
 	alines, blines := strings.Split(a, "\n"), strings.Split(b, "\n")
 
 	chunks := diff.DiffChunks(alines, blines)
@@ -56,7 +59,9 @@ func difflines(a, b string) string {
 		}
 		for _, line := range c.Deleted {
 			fmt.Fprintf(buf, "-%s\n", line)
+			removed = true
 		}
 	}
-	return strings.TrimRight(buf.String(), "\n")
+
+	return strings.TrimRight(buf.String(), "\n"), removed
 }
