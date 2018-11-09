@@ -4,8 +4,10 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,6 +17,9 @@ type Command interface {
 	Name() string
 	Parse(args []string) error
 	Exec()
+
+	RepoDir() string
+	Path(args ...string) string
 }
 
 type Common struct {
@@ -92,7 +97,7 @@ func main() {
 				fmt.Fprintln(os.Stderr, "invalid args", err)
 				os.Exit(1)
 			}
-			cmd.Exec()
+			Exec(cmd)
 			return
 		}
 	}
@@ -103,4 +108,21 @@ func main() {
 		fmt.Fprintln(os.Stderr, "\t"+cmd.Name())
 	}
 	os.Exit(1)
+}
+
+func Exec(cmd Command) {
+	gomodfilename := filepath.Join(cmd.RepoDir(), "go.mod")
+
+	gomod, gomoderr := ioutil.ReadFile(gomodfilename)
+	defer func() {
+		if gomoderr != nil {
+			return
+		}
+		gomodnew, gomodnewerr := ioutil.ReadFile(gomodfilename)
+		if gomodnewerr == nil && !bytes.Equal(gomod, gomodnew) {
+			ioutil.WriteFile(gomodfilename, gomod, 0644)
+		}
+	}()
+
+	cmd.Exec()
 }
