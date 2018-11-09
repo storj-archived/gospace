@@ -114,7 +114,7 @@ func (cmd Common) Tidy() {
 	ErrFatalf(err, "unable to change directory: %v\n", err)
 
 	for repeat := 2; repeat > 0; repeat-- {
-		gomod := exec.Command("go", "mod", "tidy", "-v")
+		gomod := exec.Command("go", "mod", "tidy")
 		gomod.Env = append(os.Environ(), "GO111MODULE=on")
 		gomod.Stdout, gomod.Stderr = os.Stderr, os.Stderr
 		err = gomod.Run()
