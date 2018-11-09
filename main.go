@@ -85,6 +85,7 @@ func main() {
 		&Update{Common: common},
 		// &Cache{Common: common},
 
+		&IsTidy{Common: common},
 		&Hash{Common: common},
 		&ZipVendor{Common: common},
 		&UnzipVendor{Common: common},

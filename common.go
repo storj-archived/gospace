@@ -99,6 +99,33 @@ func (cmd Common) VendorModules() {
 	ErrFatalf(err, "go mod vendor failed: %v\n", err)
 }
 
+func (cmd Common) Tidy() {
+	fmt.Fprintf(os.Stderr, "# Tidying modules\n")
+
+	workdir, err := os.Getwd()
+	ErrFatalf(err, "unable to get working directory: %v\n", err)
+
+	defer func() {
+		err = os.Chdir(workdir)
+		ErrFatalf(err, "unable to change directory: %v\n", err)
+	}()
+
+	err = os.Chdir(cmd.RepoDir())
+	ErrFatalf(err, "unable to change directory: %v\n", err)
+
+	for repeat := 2; repeat > 0; repeat-- {
+		gomod := exec.Command("go", "mod", "tidy", "-v")
+		gomod.Env = append(os.Environ(), "GO111MODULE=on")
+		gomod.Stdout, gomod.Stderr = os.Stderr, os.Stderr
+		err = gomod.Run()
+		Errf(err, "go mod tidy failed, retrying: %v\n", err)
+		if err == nil {
+			break
+		}
+	}
+	ErrFatalf(err, "go mod tidy failed: %v\n", err)
+}
+
 func (cmd Common) DeleteVendor() {
 	fmt.Fprintf(os.Stderr, "# Deleting vendor\n")
 
